@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Title</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <style>
+    .flash {
+      position: fixed;
+      top: 30px;
+      right: 70px;
+      z-index: 9999;
+    }
+
+    .flash-message {
+      background-color: #addea4;
+      color: #155724;
+      padding: 10px;
+      border: 1px solid #addea4;
+      border-radius: 4px;
+      color: rgb(36, 32, 32);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flash">
+    {{#if message}}
+    <div class="flash-message">
+      {{message}}
+    </div>
+    {{/if}}
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>Danh sách sản phẩm</h1>
+        <button class="btn btn-success" name="addItem" id="btnAddItem">Thêm sản phẩm</button>
+        <p>Click chọn một sản phẩm cụ thể để xem chi tiết</p>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">STT</th>
+              <th scope="col">Tên sản phẩm</th>
+              <th scope="col">Hình ảnh</th>
+              <th scope="col">Giá</th>
+              <th scope="col">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each products}}
+            <tr>
+              <td class="product-row" data-product-id="{{id}}">{{id}}</td>
+              <td class="product-row" data-product-id="{{id}}">{{name}}</td>
+              <td class="product-row" data-product-id="{{id}}"><img src="{{this.image}}" alt="{{name}} Image"
+                  style="width: 50px; height:50px"></td>
+              <td class="product-row" data-product-id="{{id}}">${{price}}</td>
+              <td>
+                <button id="edit" class="btn btn-info"><a href="/edit/{{this.id}}" style="color: white;">Chỉnh
+                    sửa</a></button>
+                <button id="delete" class="btn btn-danger" onclick="show('{{this.name}}','{{this.id}}')"
+                  data-toggle="modal" data-target="#myModal">Xóa</button>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Xóa sản phẩm</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body" id="infor">
+          <p id="productName"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-danger" id="btnDelete">Xóa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('btnAddItem').addEventListener('click', function () {
+      window.location.href = '/add';
+    });
+
+    var modal = document.getElementById("myModal");
+
+    function show(productName, productId) {
+      document.getElementById('productName').textContent = 'Bạn có chắc muốn xóa sản phẩm ' + productName + ' ????';
+      modal.style.display = "block";
+      document.getElementById('btnDelete').setAttribute('data-id', productId);
+    }
+
+    document.getElementById('btnDelete').addEventListener('click', function () {
+      var productId = document.getElementById('btnDelete').getAttribute('data-id');
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/delete/' + productId;
+      document.body.appendChild(form);
+      form.submit();
+    });
+
+    document.querySelectorAll('.product-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const productId = row.dataset.productId;
+        window.location.href = `/${productId}`;
+      });
+    });
+
+    setTimeout(() => {
+      const flashMessage = document.querySelector('.flash-message');
+      if (flashMessage) {
+        flashMessage.style.display = 'none';
+      }
+    }, 1500); 
+  </script>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
